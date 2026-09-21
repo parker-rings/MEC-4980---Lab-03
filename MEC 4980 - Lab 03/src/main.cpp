@@ -19,6 +19,8 @@
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
 #include "Adafruit_BME680.h"
+#include <Adafruit_ST7789.h>
+#include <Arduino.h>
 
 #define BME_SCK 13
 #define BME_MISO 12
@@ -26,6 +28,9 @@
 #define BME_CS 10
 
 #define SEALEVELPRESSURE_HPA (1013.25)
+
+Adafruit_ST7789 display = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
+GFXcanvas16 canvas(240, 135);
 
 enum hvacState {
   Heating, //0
@@ -112,6 +117,11 @@ void setup() {
   //bme.setPressureOversampling(BME680_OS_4X);
   //bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
   //bme.setGasHeater(320, 150); // 320*C for 150 ms
+  display.init(135, 240);
+  display.setRotation(3);
+  canvas.setTextColor(ST77XX_WHITE);
+  pinMode(TFT_BACKLITE, OUTPUT);
+  digitalWrite(TFT_BACKLITE, 1);
 }
 
 void loop() {
@@ -211,6 +221,40 @@ void loop() {
     }
     }
   }
+
+  canvas.fillScreen(ST77XX_BLACK);
+  canvas.setCursor(0,20);
+  if (menuMode == 0) {
+    canvas.print("Target Temperature: ");
+    if(tempMode == tempState::C) {
+      canvas.print(targetTemp);
+      canvas.print(" *C");
+    }
+    if(tempMode == tempState::F) {
+      canvas.print(targetTempF);
+      canvas.print(" *F");
+    }
+  }
+  if (menuMode == 1) {
+    canvas.print("Operation Mode is ");
+    if (opMode == 0) {
+      canvas.print("Heating");
+    }
+    if (opMode == 1) {
+      canvas.print("Cooling");
+    }
+  }
+  if (menuMode == 2) {
+    canvas.print("Currently in units: ");
+    if(tempMode == tempState::C) {
+      canvas.print(" *C");
+    }
+    if(tempMode == tempState::F) {
+      canvas.print(" *F");
+    }
+  }
+  
+  display.drawRGBBitmap(0,0, canvas.getBuffer(), 240, 135);
    
   
 /*
