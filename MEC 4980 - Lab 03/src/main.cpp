@@ -137,9 +137,23 @@ void loop() {
     Serial.print(targetTempF);
   }
   Serial.print(" operating in mode ");
-  Serial.print((int)opMode);
+  if (opMode == 0) {
+    Serial.print("Heating");
+  }
+  if (opMode == 1) {
+    Serial.print("Cooling");
+  }
   Serial.print(" in menu ");
-  Serial.println(menuMode);
+  if (menuMode == 0) {
+    Serial.println("Temperature Mode");
+  }
+  if (menuMode == 1) {
+    Serial.println("Operation Mode");
+  }
+  if (menuMode == 2) {
+    Serial.println("Unit Mode");
+  }
+  
 
   if (menuButtonFlag) {
     menuButtonFlag = false;
