@@ -188,13 +188,13 @@ void loop() {
       }
       
     }
-  if (menuMode == OperationMenu) {
-    opMode = (hvacState)(((int)opMode + 1) % (int)hvacState::hCount);
-  }
-  if (menuMode == UnitMenu) {
-    tempMode = (tempState)(((int)tempMode + 1) % (int)tempState::TCount);
-    // Change from F to C or C to F
-  }
+    if (menuMode == OperationMenu) {
+      opMode = (hvacState)(((int)opMode + 1) % (int)hvacState::hCount);
+    }
+    if (menuMode == UnitMenu) {
+      tempMode = (tempState)(((int)tempMode + 1) % (int)tempState::TCount);
+      // Change from F to C or C to F
+    }
   changeButtonFlag = false;
   //opMode = (hvacState)(((int)opMode + 1) % (int)hvacState::hCount);
   }
@@ -216,23 +216,35 @@ void loop() {
         Serial.println("Heater is on now!");
       }
     } else if (opMode == Cooling) {
-    if (currentTemp > targetTempF) {
-      Serial.println("AC is on now!");
-    }
+      if (currentTemp > targetTempF) {
+        Serial.println("AC is on now!");
+      }
     }
   }
 
   canvas.fillScreen(ST77XX_BLACK);
   canvas.setCursor(0,20);
   if (menuMode == 0) {
-    canvas.print("Target Temperature: ");
     if(tempMode == tempState::C) {
+      canvas.print("The current temperature is ");
+      canvas.print(currentTemp);
+      canvas.print(" *C and the Target Temperature is ");
       canvas.print(targetTemp);
       canvas.print(" *C");
     }
     if(tempMode == tempState::F) {
+      canvas.print("The current temperature is ");
+      canvas.print(currentTemp);
+      canvas.print(" *F and the Target Temperature is ");
       canvas.print(targetTempF);
       canvas.print(" *F");
+    }
+    canvas.print(" While the operation Mode is ");
+    if (opMode == 0) {
+      canvas.print("Heating");
+    }
+    if (opMode == 1) {
+      canvas.print("Cooling");
     }
   }
   if (menuMode == 1) {
